@@ -1,0 +1,45 @@
+// Design tokens ported from the legacy index.html <style> block.
+// Single source of truth for brand colors/typography — see CLAUDE.md "Brand context".
+
+:root {
+  --red: #c8102e;
+  --red-deep: #9a0c23;
+  --gold: #b8893a;
+  --gold-soft: #f3e7cf;
+  --ink: #1f1f1f;
+  --ink-2: #555;
+  --line: #e6e2da;
+  --bg: #faf8f4;
+  --card: #fff;
+  --dark: #2a2a2a;
+  --on-dark: #f2efe9;
+
+  --radius: 10px;
+  --wrap: 1160px;
+
+  --font-body: 'Open Sans', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --ink: #f2efe9;
+    --ink-2: #b9b4aa;
+    --line: #3a3a3a;
+    --bg: #161616;
+    --card: #222;
+    --dark: #0f0f0f;
+    --gold-soft: #3a3122;
+    --red: #e64946;
+  }
+}
+
+:root[data-theme='dark'] {
+  --ink: #f2efe9;
+  --ink-2: #b9b4aa;
+  --line: #3a3a3a;
+  --bg: #161616;
+  --card: #222;
+  --dark: #0f0f0f;
+  --gold-soft: #3a3122;
+  --red: #e64946;
+}

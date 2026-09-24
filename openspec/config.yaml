@@ -5,12 +5,14 @@ schema: spec-driven
 # Add your tech stack, conventions, style guides, domain knowledge, etc.
 context: |
   MCCC (Montreal Chinese Chamber of Commerce) official site — trilingual (zh/en/fr, zh default).
-  Target stack (see changes/astro-migration): Astro, static output, no JS UI framework, plain CSS
-  custom properties (no Tailwind), Astro Content Collections + built-in i18n routing, deployed
-  static to Vercel. No package.json yet — this is pre-scaffold; astro-migration task 1.1 does the
-  actual `npm create astro@latest`. Preserve existing visual design/copy exactly; no redesign.
-  This build is meant to later generalize into a reusable client-site starter — avoid
-  MCCC-specific choices where a generic equivalent is equally simple.
+  Stack: Astro 7, TypeScript, SCSS (no Tailwind, no JS UI framework), Vitest, deployed static to
+  Vercel. i18n routing configured in astro.config.mjs. Design tokens live in
+  src/styles/_theme.scss — treat as source of truth for colors/fonts, don't hardcode hex values.
+  `index.html` at repo root is the legacy live site, kept until the Astro build reaches parity
+  (see changes/astro-migration tasks.md §7.4), not part of the Astro app. Preserve existing visual
+  design/copy exactly during migration; no redesign. This build is meant to later generalize into
+  a reusable client-site starter — avoid MCCC-specific choices where a generic equivalent is
+  equally simple.
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.
