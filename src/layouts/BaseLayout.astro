@@ -20,6 +20,14 @@ const localePath = (loc: Locale) => (loc === 'zh' ? '/' : `/${loc}/`);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      try {
+        const stored = localStorage.getItem('theme');
+        if (stored === 'dark' || stored === 'light') {
+          document.documentElement.dataset.theme = stored;
+        }
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div class="top">
@@ -40,10 +48,10 @@ const localePath = (loc: Locale) => (loc === 'zh' ? '/' : `/${loc}/`);
         <nav aria-label="Main">
           <ul>
             <li><a href="#top">{t('home')}</a></li>
-            <li><a href="#fair">{t('fair')}</a></li>
-            <li><a href="#activities">{t('act')}</a></li>
-            <li><a href="#news">{t('news')}</a></li>
-            <li><a href="#troupe">{t('troupe')}</a></li>
+            <li><a href="#timeline">{t('fair')}</a></li>
+            <li><a href="#timeline">{t('act')}</a></li>
+            <li><a href="#timeline">{t('news')}</a></li>
+            <li><a href="#timeline">{t('troupe')}</a></li>
             <li><a href="#about">{t('about')}</a></li>
             <li><a href="#contact">{t('contact')}</a></li>
             <li><a class="join" href="#membership">{t('join')}</a></li>
@@ -66,9 +74,9 @@ const localePath = (loc: Locale) => (loc === 'zh' ? '/' : `/${loc}/`);
           <div>
             <h4>{t('footerExplore')}</h4>
             <ul>
-              <li><a href="#fair">{t('fair')}</a></li>
-              <li><a href="#activities">{t('act')}</a></li>
-              <li><a href="#troupe">{t('troupe')}</a></li>
+              <li><a href="#timeline">{t('fair')}</a></li>
+              <li><a href="#timeline">{t('act')}</a></li>
+              <li><a href="#timeline">{t('troupe')}</a></li>
             </ul>
           </div>
           <div>
@@ -92,19 +100,35 @@ const localePath = (loc: Locale) => (loc === 'zh' ? '/' : `/${loc}/`);
         const isDark = root.dataset.theme
           ? root.dataset.theme === 'dark'
           : matchMedia('(prefers-color-scheme: dark)').matches;
-        root.dataset.theme = isDark ? 'light' : 'dark';
+        const next = isDark ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem('theme', next);
+        } catch (e) {}
       });
     </script>
 
-    <script define:vars={{ locale }}>
-      try {
-        const stored = localStorage.getItem('lang');
-        if (locale === 'zh' && window.location.pathname === '/' && (stored === 'en' || stored === 'fr')) {
-          window.location.replace('/' + stored + '/');
-        } else {
-          localStorage.setItem('lang', locale);
+    <script>
+      document.querySelectorAll<HTMLElement>('[data-year-filter]').forEach((container) => {
+        const rows = container.querySelectorAll<HTMLElement>('[data-year]:not(.year-pill)');
+        const pills = container.querySelectorAll<HTMLButtonElement>('.year-pill');
+
+        function showYear(year: string) {
+          rows.forEach((row) => {
+            row.hidden = row.dataset.year !== year;
+          });
+          pills.forEach((pill) => {
+            pill.setAttribute('aria-pressed', String(pill.dataset.year === year));
+          });
         }
-      } catch (e) {}
+
+        pills.forEach((pill) => {
+          pill.addEventListener('click', () => showYear(pill.dataset.year ?? ''));
+        });
+
+        const firstYear = pills[0]?.dataset.year;
+        if (firstYear) showYear(firstYear);
+      });
     </script>
   </body>
 </html>

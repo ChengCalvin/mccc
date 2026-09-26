@@ -23,6 +23,12 @@
   "actH": "Activités communautaires",
   "newsH": "Actualités récentes",
   "troupeH": "Troupe artistique",
+  "timelineH": "Actualités récentes",
+
+  "kindActivity": "Activité",
+  "kindTroupe": "Troupe",
+  "kindNews": "Article",
+  "kindFair": "Foire",
   "aboutH": "À propos de la Chambre",
   "joinH": "Adhérer",
   "contactH": "Nous joindre",

@@ -1,0 +1,80 @@
+---
+import { getRecentEntries, type EntryKind } from '../lib/recentEntries';
+import { useTranslations, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const entries = await getRecentEntries(locale);
+const years = [...new Set(entries.map((entry) => entry.date.getFullYear()))].sort((a, b) => b - a);
+
+const monthLocale = locale === 'zh' ? 'zh-CN' : locale === 'fr' ? 'fr-CA' : 'en-CA';
+
+const kindKey: Record<EntryKind, 'kindActivity' | 'kindTroupe' | 'kindNews' | 'kindFair'> = {
+  activity: 'kindActivity',
+  troupe: 'kindTroupe',
+  news: 'kindNews',
+  fair: 'kindFair',
+};
+
+const kindIcon: Record<EntryKind, string> = {
+  activity:
+    '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  troupe:
+    '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>',
+  news:
+    '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h13a2 2 0 0 1 2 2v13a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V4Z"/><path d="M8 8h7M8 12h7M8 16h4"/></svg>',
+  fair:
+    '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C9 6 7 9 7 12a5 5 0 0 0 10 0c0-3-2-6-5-10Z"/><path d="M3 21h18"/></svg>',
+};
+---
+
+<section id="timeline">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">Fair · Community · Troupe · News</div>
+        <h2>{t('timelineH')}</h2>
+      </div>
+    </div>
+
+    <div class="timeline" data-year-filter>
+      <div class="year-filter" role="group" aria-label="Year filter">
+        {years.map((year) => (
+          <button type="button" class="year-pill" data-year={year}>{year}</button>
+        ))}
+      </div>
+
+      <ul class="timeline-list">
+        {entries.map((entry) => {
+          const day = String(entry.date.getDate()).padStart(2, '0');
+          const month = entry.date.toLocaleString(monthLocale, { month: 'short' });
+          return (
+            <li class={`row kind-${entry.kind}`} data-year={entry.date.getFullYear()}>
+              <div class="date-block">
+                <span class="day">{day}</span>
+                <span class="month">{month}</span>
+              </div>
+              <div class="row-body">
+                <div class="row-meta">
+                  <span class="kind-icon" aria-hidden="true" set:html={kindIcon[entry.kind]} />
+                  <span class="kind-label">{t(kindKey[entry.kind])}</span>
+                  {entry.tag && <span class="tag">{entry.tag}</span>}
+                </div>
+                <h3>{entry.link ? <a href={entry.link}>{entry.title}</a> : entry.title}</h3>
+              </div>
+              {entry.image && (
+                <div class="thumb">
+                  <img src={entry.image} alt="" loading="lazy" />
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </div>
+</section>

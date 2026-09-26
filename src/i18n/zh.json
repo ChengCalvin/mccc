@@ -23,6 +23,12 @@
   "actH": "社区活动",
   "newsH": "近期新闻",
   "troupeH": "华商会艺术团",
+  "timelineH": "近期动态",
+
+  "kindActivity": "活动",
+  "kindTroupe": "艺术团",
+  "kindNews": "文章",
+  "kindFair": "庙会",
   "aboutH": "关于华商会",
   "joinH": "加入我们",
   "contactH": "联系我们",

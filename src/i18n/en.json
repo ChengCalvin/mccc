@@ -23,6 +23,12 @@
   "actH": "Community Activities",
   "newsH": "Recent News",
   "troupeH": "Arts Troupe",
+  "timelineH": "Recent Updates",
+
+  "kindActivity": "Activity",
+  "kindTroupe": "Troupe",
+  "kindNews": "Article",
+  "kindFair": "Fair",
   "aboutH": "About the Chamber",
   "joinH": "Join Us",
   "contactH": "Contact Us",

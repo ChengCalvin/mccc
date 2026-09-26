@@ -3,9 +3,13 @@ import { glob } from 'astro/loaders';
 
 const cardFields = {
   title: z.string(),
+  titleEn: z.string().optional(),
+  titleFr: z.string().optional(),
   date: z.coerce.date(),
   image: z.string().optional(),
   tag: z.string().optional(),
+  tagEn: z.string().optional(),
+  tagFr: z.string().optional(),
   link: z.string().url().optional(),
 };
 
@@ -19,7 +23,11 @@ const fairYears = defineCollection({
   schema: z.object({
     year: z.number(),
     edition: z.string(),
+    editionEn: z.string().optional(),
+    editionFr: z.string().optional(),
     title: z.string(),
+    titleEn: z.string().optional(),
+    titleFr: z.string().optional(),
     date: z.coerce.date(),
     thumbnail: z.string().optional(),
     link: z.string().url().optional(),
