@@ -1,0 +1,40 @@
+---
+import { useTranslations, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<section id="membership">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">Membership</div>
+        <h2>{t('joinH')}</h2>
+      </div>
+    </div>
+    <div class="grid g3">
+      <div class="ph">
+        <small>{t('memberTemplateLabel')}</small>
+        <h3>{t('memberIndividualTitle')}</h3>
+        <p>{t('memberIndividualDesc')}</p>
+        <p><b>{t('memberIndividualPrice')}</b></p>
+      </div>
+      <div class="ph">
+        <small>{t('memberTemplateLabel')}</small>
+        <h3>{t('memberBusinessTitle')}</h3>
+        <p>{t('memberBusinessDesc')}</p>
+        <p><b>{t('memberBusinessPrice')}</b></p>
+      </div>
+      <div class="ph">
+        <small>{t('memberTemplateLabel')}</small>
+        <h3>{t('memberSponsorTitle')}</h3>
+        <p>{t('memberSponsorDesc')}</p>
+        <p><b>{t('memberSponsorPrice')}</b></p>
+      </div>
+    </div>
+  </div>
+</section>

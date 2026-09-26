@@ -1,0 +1,25 @@
+---
+import { useTranslations, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<section class="contact" id="contact">
+  <div class="wrap grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:36px">
+    <div>
+      <div class="eyebrow">Contact</div>
+      <h2 style="font-size:32px;margin:6px 0 20px">{t('contactH')}</h2>
+      <dl>
+        <dt>{t('addr')}</dt><dd>1070A Anderson, Montreal, Quebec H2Z 1L9</dd>
+        <dt>{t('hours')}</dt><dd>Mon · Wed · Fri &nbsp; 1:30 PM – 5:30 PM</dd>
+        <dt>{t('phone')}</dt><dd>(514) 800-3860</dd>
+        <dt>{t('emailLabel')}</dt><dd>mtlccoc@gmail.com</dd>
+      </dl>
+    </div>
+    <div class="map">{t('mapPlaceholder')}</div>
+  </div>
+</section>

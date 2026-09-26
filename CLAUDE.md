@@ -6,36 +6,46 @@ Official site for the **Montreal Chinese Chamber of Commerce (蒙特利尔华商
 ## Stack
 - **Astro 7** — static output, no JS UI framework (approved decision, Next.js explicitly rejected as unneeded for this site's interactivity)
 - **TypeScript**, **SCSS** (via `sass`) — **no Tailwind**, per design.md
-- **Vitest** — test runner, no test files yet (nothing with logic to test until content collections/i18n land)
-- i18n: Astro's built-in locale routing configured in `astro.config.mjs` (`zh`/`en`/`fr`, default `zh`) — will replace the legacy inline `T = {zh:{...}}` JS object
-- Content: Astro Content Collections planned for `news`/`fair-years`/`activities` (not yet created — see tasks.md §4), replacing hand-duplicated HTML cards
-- Deploy target: Vercel, static output
-- `index.html` at the repo root is the **legacy live site** — kept until the Astro build reaches parity (tasks.md §7.4), not part of the Astro app
+- **Vitest** — test runner; `src/lib/i18n.test.ts` fails the suite if a translation key is missing from any locale
+- i18n: Astro's built-in locale routing configured in `astro.config.mjs` (`zh`/`en`/`fr`, default `zh`); translation strings live in `src/i18n/{zh,en,fr}.json`, loaded via `src/lib/i18n.ts`'s `useTranslations()` — replaces the legacy inline `T = {zh:{...}}` JS object
+- Content: Astro Content Collections (`news`, `fair-years`, `activities`, `troupe`) defined in `src/content.config.ts` (Astro 7's collection-config file — not `src/content/config.ts`, which is the deprecated legacy location), replacing hand-duplicated HTML cards
+- Deploy target: Vercel, static output — project not yet linked; the user will run `vercel link`/`vercel deploy` themselves when ready
+- The astro-migration change (openspec/changes/astro-migration/) is implemented; the legacy `index.html` has been removed now that the Astro build reached parity
 
 ## Project structure
 ```
-index.html                    # legacy live site (single file — remove once Astro build reaches parity)
 astro.config.mjs              # i18n config (zh/en/fr, default zh)
 vitest.config.ts
 src/
-  pages/index.astro           # entry route (placeholder — real sections land per tasks.md §2-6)
-  layouts/                    # shared page layouts (empty — BaseLayout.astro planned, tasks.md §2)
-  components/                 # shared UI components (empty — section components planned, tasks.md §4-6)
-  content/                    # content collections: news/fair-years/activities (empty — schema planned, tasks.md §4.1)
+  content.config.ts           # Zod schemas + glob loaders for the 4 content collections
+  pages/
+    index.astro                # zh (default locale, unprefixed)
+    en/index.astro, fr/index.astro
+  layouts/
+    BaseLayout.astro           # head, header/nav, footer, theme toggle + locale-redirect scripts
+  components/                  # section components (Hero, Stats, FairGrid, ActivitiesGrid, NewsList,
+                                # TroupeList, About, Membership, Contact) + HomeContent.astro assembling them
+  content/
+    news/*.md                  # migrated reference/texts/posts/*.md articles (incl. ones unused by legacy site)
+    fair-years/*.md             # 2017-2024 Spring Festival fair entries (year, edition, thumbnail, link)
+    activities/*.md, troupe/*.md
+  i18n/{zh,en,fr}.json          # per-locale translation data
+  lib/
+    i18n.ts                    # useTranslations() loader
+    i18n.test.ts                # build-time completeness check (vitest)
   styles/
-    global.scss                # base reset + body styles, imports theme
+    global.scss                 # ported layout/component CSS, imports theme
     _theme.scss                 # design tokens (colors, fonts) — source of truth for brand
-  lib/                         # utilities (empty)
-public/                       # static assets (favicon only so far)
-openspec/                     # spec-driven workflow (schema: spec-driven)
+public/images/                 # media copied from reference/images/media/ (flat, numeric filenames)
+openspec/                      # spec-driven workflow (schema: spec-driven)
   config.yaml
-  changes/astro-migration/    # approved proposal/design/tasks for this rebuild
-reference/                    # scraped source material from the old WordPress site
-  texts/posts/*.md            # real article content, not yet migrated into src/content/
-  texts/pages/, texts/api/    # WordPress export data (pages, categories, media index)
-  images/, images/media/      # image assets pulled from the old site
-  styles/                     # old WordPress theme CSS (not used by current index.html)
-  icons/                      # language-flag icons (en-ca, fr-qc, zh-CN)
+  changes/astro-migration/     # implemented proposal/design/tasks for this rebuild
+reference/                     # scraped source material from the old WordPress site (kept for provenance)
+  texts/posts/*.md             # source articles — migrated into src/content/, not read at build time
+  texts/pages/, texts/api/     # WordPress export data (pages, categories, media index)
+  images/, images/media/       # original image assets (public/images/ holds the ones actually used)
+  styles/                      # old WordPress theme CSS (unused)
+  icons/                       # language-flag icons (en-ca, fr-qc, zh-CN)
 ```
 
 ## Key design decisions

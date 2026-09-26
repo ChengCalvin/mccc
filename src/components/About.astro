@@ -1,0 +1,32 @@
+---
+import { useTranslations, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<section id="about" style="background:var(--card)">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">About</div>
+        <h2>{t('aboutH')}</h2>
+      </div>
+    </div>
+    <div class="ph">
+      <small>{t('aboutTemplateLabel')}</small>
+      <h3>{t('aboutMissionTitle')}</h3>
+      <p>{t('aboutP1')}</p>
+      <p>{t('aboutP2')}</p>
+      <div class="people">
+        <div class="person"><i></i><b>{t('roleName1')}</b><span>{t('rolePresident')}</span></div>
+        <div class="person"><i></i><b>{t('roleName2')}</b><span>{t('roleVicePresident')}</span></div>
+        <div class="person"><i></i><b>{t('roleName3')}</b><span>{t('roleSecretary')}</span></div>
+        <div class="person"><i></i><b>{t('roleName4')}</b><span>{t('roleTreasurer')}</span></div>
+      </div>
+    </div>
+  </div>
+</section>

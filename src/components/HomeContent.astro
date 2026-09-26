@@ -1,0 +1,27 @@
+---
+import Hero from './Hero.astro';
+import Stats from './Stats.astro';
+import FairGrid from './FairGrid.astro';
+import ActivitiesGrid from './ActivitiesGrid.astro';
+import NewsList from './NewsList.astro';
+import TroupeList from './TroupeList.astro';
+import About from './About.astro';
+import Membership from './Membership.astro';
+import Contact from './Contact.astro';
+import type { Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+---
+
+<Hero locale={locale} />
+<Stats locale={locale} />
+<FairGrid locale={locale} />
+<ActivitiesGrid locale={locale} />
+<NewsList locale={locale} />
+<TroupeList locale={locale} />
+<About locale={locale} />
+<Membership locale={locale} />
+<Contact locale={locale} />

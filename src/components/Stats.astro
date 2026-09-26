@@ -1,0 +1,18 @@
+---
+import { useTranslations, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<div class="stats">
+  <div class="wrap">
+    <div><b>2017</b><span>{t('s1')}</span></div>
+    <div><b>8</b><span>{t('s2')}</span></div>
+    <div><b>25+</b><span>{t('s3')}</span></div>
+    <div><b>3</b><span>{t('s4')}</span></div>
+  </div>
+</div>

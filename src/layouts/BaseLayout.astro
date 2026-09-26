@@ -1,0 +1,110 @@
+---
+import '../styles/global.scss';
+import { useTranslations, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+  title: string;
+}
+
+const { locale, title } = Astro.props;
+const t = useTranslations(locale);
+const htmlLang = locale === 'zh' ? 'zh-CN' : locale;
+
+const localePath = (loc: Locale) => (loc === 'zh' ? '/' : `/${loc}/`);
+---
+
+<html lang={htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <div class="top">
+      <div class="wrap">
+        <span>📍 1070A Anderson, Montreal, QC H2Z 1L9 &nbsp;·&nbsp; ☎ (514) 800-3860</span>
+        <span class="lang" role="group" aria-label="Language">
+          <a href="/" aria-pressed={locale === 'zh'}>中文</a>
+          <a href="/en/" aria-pressed={locale === 'en'}>EN</a>
+          <a href="/fr/" aria-pressed={locale === 'fr'}>FR</a>
+          <button class="theme" id="theme" aria-label="Toggle theme">◐</button>
+        </span>
+      </div>
+    </div>
+
+    <header class="nav">
+      <div class="wrap">
+        <a class="logo" href={localePath(locale)}><img src="/images/logo.png" alt="MCCC 加拿大蒙特利尔华商会" /></a>
+        <nav aria-label="Main">
+          <ul>
+            <li><a href="#top">{t('home')}</a></li>
+            <li><a href="#fair">{t('fair')}</a></li>
+            <li><a href="#activities">{t('act')}</a></li>
+            <li><a href="#news">{t('news')}</a></li>
+            <li><a href="#troupe">{t('troupe')}</a></li>
+            <li><a href="#about">{t('about')}</a></li>
+            <li><a href="#contact">{t('contact')}</a></li>
+            <li><a class="join" href="#membership">{t('join')}</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <slot />
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <div class="cols">
+          <div>
+            <h4>MCCC · 加拿大蒙特利尔华商会</h4>
+            <p>{t('footerTaglineEn')}<br />{t('footerTaglineFr')}</p>
+          </div>
+          <div>
+            <h4>{t('footerExplore')}</h4>
+            <ul>
+              <li><a href="#fair">{t('fair')}</a></li>
+              <li><a href="#activities">{t('act')}</a></li>
+              <li><a href="#troupe">{t('troupe')}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>{t('linksH')}</h4>
+            <ul>
+              <li>{t('linkImmigrationCanada')}</li>
+              <li>{t('linkImmigrationQuebec')}</li>
+              <li>{t('linkEmbassyShort')}</li>
+              <li>{t('linkConsulateShort')}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="legal">{t('footerLegal')}</div>
+      </div>
+    </footer>
+
+    <script>
+      const themeBtn = document.getElementById('theme');
+      themeBtn?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const isDark = root.dataset.theme
+          ? root.dataset.theme === 'dark'
+          : matchMedia('(prefers-color-scheme: dark)').matches;
+        root.dataset.theme = isDark ? 'light' : 'dark';
+      });
+    </script>
+
+    <script define:vars={{ locale }}>
+      try {
+        const stored = localStorage.getItem('lang');
+        if (locale === 'zh' && window.location.pathname === '/' && (stored === 'en' || stored === 'fr')) {
+          window.location.replace('/' + stored + '/');
+        } else {
+          localStorage.setItem('lang', locale);
+        }
+      } catch (e) {}
+    </script>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+---
+import { useTranslations, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow" style="color:var(--gold)">{t('heroEyebrow')}</div>
+    <h1 set:html={t('heroTitleHtml')} />
+    <p>{t('heroSub')}</p>
+    <a class="btn primary" href="#membership">{t('join')}</a>
+    <a class="btn ghost" href="#activities">{t('explore')}</a>
+  </div>
+</section>

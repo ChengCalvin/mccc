@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import { useTranslations, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const entries = (await getCollection('news'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+---
+
+<section id="news" style="background:var(--card)">
+  <div class="wrap split">
+    <div>
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">News</div>
+          <h2>{t('newsH')}</h2>
+        </div>
+        <a class="more" href="https://www.mtlccc.net/?cat=7">{t('all')}</a>
+      </div>
+      <ul class="list">
+        {entries.map((entry) => (
+          <li>
+            {entry.data.image && <img src={entry.data.image} alt="" loading="lazy" />}
+            <div>
+              <h3>{entry.data.title}</h3>
+              <div class="date">{entry.data.date.toISOString().slice(0, 10)}</div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <aside class="panel">
+      <h3>{t('linksH')}</h3>
+      <ul>
+        <li>{t('linkImmigrationCanada')}</li>
+        <li>{t('linkImmigrationQuebec')}</li>
+        <li>{t('linkEmbassy')}</li>
+        <li>{t('linkConsulate')}</li>
+      </ul>
+    </aside>
+  </div>
+</section>
