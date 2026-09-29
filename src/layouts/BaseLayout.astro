@@ -12,6 +12,14 @@ const t = useTranslations(locale);
 const htmlLang = locale === 'zh' ? 'zh-CN' : locale;
 
 const localePath = (loc: Locale) => (loc === 'zh' ? '/' : `/${loc}/`);
+
+// Preserve the current page when switching locales: strip the active
+// locale's prefix off the URL, then re-prefix with the target locale.
+const currentPath = Astro.url.pathname;
+const pathWithoutLocale =
+  locale === 'zh' ? currentPath : currentPath.replace(new RegExp(`^/${locale}(/|$)`), '/');
+const switchLocalePath = (loc: Locale) =>
+  loc === 'zh' ? pathWithoutLocale : `/${loc}${pathWithoutLocale}`.replace(/\/{2,}/g, '/');
 ---
 
 <html lang={htmlLang}>
@@ -34,9 +42,9 @@ const localePath = (loc: Locale) => (loc === 'zh' ? '/' : `/${loc}/`);
       <div class="wrap">
         <span>📍 1070A Anderson, Montreal, QC H2Z 1L9 &nbsp;·&nbsp; ☎ (514) 800-3860</span>
         <span class="lang" role="group" aria-label="Language">
-          <a href="/" aria-pressed={locale === 'zh'}>中文</a>
-          <a href="/en/" aria-pressed={locale === 'en'}>EN</a>
-          <a href="/fr/" aria-pressed={locale === 'fr'}>FR</a>
+          <a href={switchLocalePath('zh')} aria-pressed={locale === 'zh'}>中文</a>
+          <a href={switchLocalePath('en')} aria-pressed={locale === 'en'}>EN</a>
+          <a href={switchLocalePath('fr')} aria-pressed={locale === 'fr'}>FR</a>
           <button class="theme" id="theme" aria-label="Toggle theme">◐</button>
         </span>
       </div>
