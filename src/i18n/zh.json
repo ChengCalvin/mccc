@@ -75,5 +75,9 @@
   "memberSponsorDesc": "Duis aute irure dolor in reprehenderit in voluptate.",
   "memberSponsorPrice": "Contact us",
 
-  "mapPlaceholder": "Map placeholder"
+  "mapPlaceholder": "Map placeholder",
+
+  "detailBack": "返回首页",
+  "detailPrev": "上一篇",
+  "detailNext": "下一篇"
 }

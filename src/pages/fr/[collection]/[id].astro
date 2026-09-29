@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import EntryDetail from '../../../components/EntryDetail.astro';
+import { getDetailStaticPaths } from '../../../lib/detailEntries';
+
+export async function getStaticPaths() {
+  return getDetailStaticPaths('fr');
+}
+
+const { entry, prev, next } = Astro.props;
+---
+
+<BaseLayout locale="fr" title={`${entry.title} | MCCC`}>
+  <EntryDetail locale="fr" entry={entry} prev={prev} next={next} />
+</BaseLayout>

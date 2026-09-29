@@ -1,0 +1,163 @@
+---
+import { parseContentBlocks } from '../lib/content-blocks';
+import { detailHref, collectionToKind } from '../lib/routes';
+import { useTranslations, type Locale } from '../lib/i18n';
+import type { DetailEntry } from '../lib/detailEntries';
+import MediaDivider from './MediaDivider.astro';
+
+interface Props {
+  locale: Locale;
+  entry: DetailEntry;
+  prev: DetailEntry | null;
+  next: DetailEntry | null;
+}
+
+const { locale, entry, prev, next } = Astro.props;
+const t = useTranslations(locale);
+const blocks = parseContentBlocks(entry.body);
+
+const dateLocale = locale === 'zh' ? 'zh-CN' : locale === 'fr' ? 'fr-CA' : 'en-CA';
+const formattedDate = entry.date.toLocaleDateString(dateLocale, {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<article class="entry-detail">
+  <div class="wrap">
+    <a class="entry-back" href={locale === 'zh' ? '/' : `/${locale}/`}>{t('detailBack')}</a>
+
+    <h1>{entry.title}</h1>
+    <div class="entry-meta">
+      <time datetime={entry.date.toISOString()}>{formattedDate}</time>
+      {entry.tag && <span class="tag">{entry.tag}</span>}
+    </div>
+
+    <div class="entry-body">
+      {blocks.length === 0 && entry.image && (
+        <MediaDivider items={[{ type: 'image', src: entry.image, alt: entry.title }]} />
+      )}
+      {blocks.map((block) =>
+        block.type === 'text' ? (
+          <div class="entry-text" set:html={block.html} />
+        ) : (
+          <MediaDivider items={block.items} />
+        )
+      )}
+    </div>
+
+    {(prev || next) && (
+      <nav class="entry-nav" aria-label="Post navigation">
+        {prev ? (
+          <a class="entry-nav-link entry-nav-prev" href={detailHref(locale, collectionToKind[entry.collection], prev.id)}>
+            {prev.image && <img src={prev.image} alt="" loading="lazy" />}
+            <span class="entry-nav-text">
+              <span class="entry-nav-label">{t('detailPrev')}</span>
+              <span class="entry-nav-title">{prev.title}</span>
+            </span>
+          </a>
+        ) : <span />}
+        {next ? (
+          <a class="entry-nav-link entry-nav-next" href={detailHref(locale, collectionToKind[entry.collection], next.id)}>
+            <span class="entry-nav-text">
+              <span class="entry-nav-label">{t('detailNext')}</span>
+              <span class="entry-nav-title">{next.title}</span>
+            </span>
+            {next.image && <img src={next.image} alt="" loading="lazy" />}
+          </a>
+        ) : <span />}
+      </nav>
+    )}
+  </div>
+</article>
+
+<style>
+  .entry-detail {
+    padding: 3rem 0 5rem;
+  }
+  .entry-back {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: var(--ink-2);
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+  .entry-back:hover {
+    color: var(--red);
+  }
+  .entry-detail h1 {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    line-height: 1.3;
+    margin: 0 0 0.75rem;
+  }
+  .entry-meta {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    color: var(--ink-2);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+  .entry-meta .tag {
+    background: var(--gold-soft);
+    color: var(--red-deep);
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+  }
+  .entry-body :global(.entry-text p) {
+    color: var(--ink);
+    line-height: 1.8;
+    margin: 0 0 1.25rem;
+  }
+  .entry-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+  .entry-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--ink);
+    padding: 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .entry-nav-next {
+    text-align: right;
+    justify-content: flex-end;
+  }
+  .entry-nav-link img {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .entry-nav-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .entry-nav-label {
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+  .entry-nav-title {
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (max-width: 640px) {
+    .entry-nav {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

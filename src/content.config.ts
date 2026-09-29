@@ -10,7 +10,8 @@ const cardFields = {
   tag: z.string().optional(),
   tagEn: z.string().optional(),
   tagFr: z.string().optional(),
-  link: z.string().url().optional(),
+  /** Original mtlccc.net URL, kept as provenance only — not a card destination. */
+  sourceUrl: z.string().url().optional(),
 };
 
 const news = defineCollection({
@@ -30,7 +31,7 @@ const fairYears = defineCollection({
     titleFr: z.string().optional(),
     date: z.coerce.date(),
     thumbnail: z.string().optional(),
-    link: z.string().url().optional(),
+    sourceUrl: z.string().url().optional(),
   }),
 });
 

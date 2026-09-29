@@ -75,5 +75,9 @@
   "memberSponsorDesc": "Duis aute irure dolor in reprehenderit in voluptate.",
   "memberSponsorPrice": "Nous contacter",
 
-  "mapPlaceholder": "Emplacement de la carte"
+  "mapPlaceholder": "Emplacement de la carte",
+
+  "detailBack": "Retour à l'accueil",
+  "detailPrev": "Précédent",
+  "detailNext": "Suivant"
 }

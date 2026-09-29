@@ -1,5 +1,6 @@
 ---
 import { getRecentEntries, type EntryKind } from '../lib/recentEntries';
+import { detailHref } from '../lib/routes';
 import { useTranslations, type Locale } from '../lib/i18n';
 
 interface Props {
@@ -64,7 +65,7 @@ const kindIcon: Record<EntryKind, string> = {
                   <span class="kind-label">{t(kindKey[entry.kind])}</span>
                   {entry.tag && <span class="tag">{entry.tag}</span>}
                 </div>
-                <h3>{entry.link ? <a href={entry.link}>{entry.title}</a> : entry.title}</h3>
+                <h3><a href={detailHref(locale, entry.kind, entry.id)}>{entry.title}</a></h3>
               </div>
               {entry.image && (
                 <div class="thumb">

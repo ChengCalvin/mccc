@@ -5,11 +5,11 @@ export type EntryKind = 'activity' | 'troupe' | 'news' | 'fair';
 
 export interface RecentEntry {
   kind: EntryKind;
+  id: string;
   title: string;
   date: Date;
   image?: string;
   tag?: string;
-  link?: string;
 }
 
 type CardCollection = CollectionEntry<'activities' | 'troupe' | 'news'>;
@@ -23,22 +23,22 @@ function localize(locale: Locale, zh: string, en?: string, fr?: string): string 
 function toRecentEntry(kind: EntryKind, locale: Locale) {
   return (entry: CardCollection): RecentEntry => ({
     kind,
+    id: entry.id,
     title: localize(locale, entry.data.title, entry.data.titleEn, entry.data.titleFr),
     date: entry.data.date,
     image: entry.data.image,
     tag: entry.data.tag && localize(locale, entry.data.tag, entry.data.tagEn, entry.data.tagFr),
-    link: entry.data.link,
   });
 }
 
 function toRecentEntryFromFairYear(locale: Locale) {
   return (entry: CollectionEntry<'fair-years'>): RecentEntry => ({
     kind: 'fair',
+    id: entry.id,
     title: localize(locale, entry.data.title, entry.data.titleEn, entry.data.titleFr),
     date: entry.data.date,
     image: entry.data.thumbnail,
     tag: localize(locale, entry.data.edition, entry.data.editionEn, entry.data.editionFr),
-    link: entry.data.link,
   });
 }
 

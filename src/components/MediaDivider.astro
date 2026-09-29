@@ -1,0 +1,116 @@
+---
+import type { MediaItem } from '../lib/content-blocks';
+import MediaItemView from './MediaItemView.astro';
+
+interface Props {
+  items: MediaItem[];
+}
+const { items } = Astro.props;
+---
+
+{items.length === 0 && <div class="media-divider media-divider--bare" role="separator"></div>}
+
+{items.length === 1 && (
+  <div class="media-divider media-divider--single">
+    <MediaItemView item={items[0]} />
+  </div>
+)}
+
+{items.length >= 2 && (
+  <div class="media-divider media-divider--carousel" data-carousel>
+    <div class="carousel-viewport">
+      {items.map((item, i) => (
+        <div class="carousel-slide" data-index={i} hidden={i !== 0}>
+          <MediaItemView item={item} />
+        </div>
+      ))}
+    </div>
+    <button type="button" class="carousel-nav carousel-nav--prev" data-carousel-prev aria-label="Previous">‹</button>
+    <button type="button" class="carousel-nav carousel-nav--next" data-carousel-next aria-label="Next">›</button>
+    <div class="carousel-counter">
+      <span data-carousel-current>1</span> / {items.length}
+    </div>
+  </div>
+)}
+
+<style>
+  .media-divider {
+    margin: 2rem 0;
+  }
+  .media-divider--bare {
+    height: 1px;
+    background: var(--line);
+    margin: 2.5rem 0;
+  }
+  .media-divider--carousel {
+    position: relative;
+    max-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .carousel-viewport {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .carousel-slide[hidden] {
+    display: none;
+  }
+  .carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .carousel-nav--prev {
+    left: 0.5rem;
+  }
+  .carousel-nav--next {
+    right: 0.5rem;
+  }
+  .carousel-counter {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--ink-2);
+    background: var(--card);
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+  }
+</style>
+
+<script>
+  function initCarousels(root: ParentNode) {
+    root.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => {
+      if (carousel.dataset.carouselInit) return;
+      carousel.dataset.carouselInit = 'true';
+      const slides = Array.from(carousel.querySelectorAll<HTMLElement>('.carousel-slide'));
+      const counter = carousel.querySelector<HTMLElement>('[data-carousel-current]');
+      let index = 0;
+      function show(i: number) {
+        index = (i + slides.length) % slides.length;
+        slides.forEach((slide, si) => {
+          slide.hidden = si !== index;
+        });
+        if (counter) counter.textContent = String(index + 1);
+      }
+      carousel.querySelector('[data-carousel-prev]')?.addEventListener('click', () => show(index - 1));
+      carousel.querySelector('[data-carousel-next]')?.addEventListener('click', () => show(index + 1));
+    });
+  }
+  initCarousels(document);
+</script>
