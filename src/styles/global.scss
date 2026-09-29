@@ -378,7 +378,9 @@ nav a {
   margin-bottom: 28px;
 }
 
-.year-pill {
+.year-pill,
+.kind-pill,
+.reset-pill {
   padding: 4px 14px;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -392,6 +394,27 @@ nav a {
     background: var(--red);
     border-color: var(--red);
     color: #fff;
+  }
+}
+
+.kind-pill {
+  border-style: dashed;
+}
+
+.search-input {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font: inherit;
+  background: var(--card);
+  color: inherit;
+
+  &::placeholder {
+    color: var(--ink-2);
   }
 }
 

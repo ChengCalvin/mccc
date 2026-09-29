@@ -20,3 +20,11 @@ const localePrefix = (locale: Locale) => (locale === 'zh' ? '' : `/${locale}`);
 export function detailHref(locale: Locale, kind: EntryKind, id: string): string {
   return `${localePrefix(locale)}/${kindToCollection[kind]}/${id}`;
 }
+
+export function postsPath(locale: Locale): string {
+  return `${localePrefix(locale)}/posts`;
+}
+
+export function aboutPath(locale: Locale): string {
+  return `${localePrefix(locale)}/about`;
+}

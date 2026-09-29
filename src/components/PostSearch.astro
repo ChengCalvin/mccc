@@ -1,6 +1,6 @@
 ---
 import { getRecentEntries, type EntryKind } from '../lib/recentEntries';
-import { detailHref, postsPath } from '../lib/routes';
+import { detailHref } from '../lib/routes';
 import { useTranslations, type Locale } from '../lib/i18n';
 
 interface Props {
@@ -11,7 +11,7 @@ const t = useTranslations(locale);
 
 const entries = await getRecentEntries(locale);
 const years = [...new Set(entries.map((entry) => entry.date.getFullYear()))].sort((a, b) => b - a);
-const defaultYears = years.slice(0, 3);
+const kinds: EntryKind[] = ['fair', 'activity', 'troupe', 'news'];
 
 const monthLocale = locale === 'zh' ? 'zh-CN' : locale === 'fr' ? 'fr-CA' : 'en-CA';
 
@@ -34,20 +34,31 @@ const kindIcon: Record<EntryKind, string> = {
 };
 ---
 
-<section id="timeline">
+<section id="posts">
   <div class="wrap">
     <div class="sec-head">
       <div>
         <div class="eyebrow">Fair · Community · Troupe · News</div>
-        <h2>{t('timelineH')}</h2>
+        <h2>{t('postsPageH')}</h2>
       </div>
-      <a class="more" href={postsPath(locale)}>{t('seeAllPosts')}</a>
     </div>
 
-    <div class="timeline" data-year-filter data-default-years={defaultYears.join(',')}>
-      <div class="year-filter" role="group" aria-label="Year filter">
+    <div class="timeline" data-year-filter>
+      <input
+        type="search"
+        class="search-input"
+        data-search-input
+        placeholder={t('postsSearchPlaceholder')}
+        aria-label={t('postsSearchPlaceholder')}
+      />
+
+      <div class="year-filter" role="group" aria-label="Filter">
+        <button type="button" class="reset-pill">{t('filterAllLabel')}</button>
         {years.map((year) => (
           <button type="button" class="year-pill" data-year={year}>{year}</button>
+        ))}
+        {kinds.map((kind) => (
+          <button type="button" class="kind-pill" data-kind={kind}>{t(kindKey[kind])}</button>
         ))}
       </div>
 
@@ -55,8 +66,14 @@ const kindIcon: Record<EntryKind, string> = {
         {entries.map((entry) => {
           const day = String(entry.date.getDate()).padStart(2, '0');
           const month = entry.date.toLocaleString(monthLocale, { month: 'short' });
+          const searchText = [entry.title, entry.tag].filter(Boolean).join(' ');
           return (
-            <li class={`row kind-${entry.kind}`} data-year={entry.date.getFullYear()}>
+            <li
+              class={`row kind-${entry.kind}`}
+              data-year={entry.date.getFullYear()}
+              data-kind={entry.kind}
+              data-search-text={searchText}
+            >
               <div class="date-block">
                 <span class="day">{day}</span>
                 <span class="month">{month}</span>

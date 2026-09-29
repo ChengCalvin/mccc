@@ -1,6 +1,7 @@
 ---
 import '../styles/global.scss';
 import { useTranslations, type Locale } from '../lib/i18n';
+import { postsPath, aboutPath } from '../lib/routes';
 
 interface Props {
   locale: Locale;
@@ -55,14 +56,10 @@ const switchLocalePath = (loc: Locale) =>
         <a class="logo" href={localePath(locale)}><img src="/images/logo.png" alt="MCCC 加拿大蒙特利尔华商会" /></a>
         <nav aria-label="Main">
           <ul>
-            <li><a href="#top">{t('home')}</a></li>
-            <li><a href="#timeline">{t('fair')}</a></li>
-            <li><a href="#timeline">{t('act')}</a></li>
-            <li><a href="#timeline">{t('news')}</a></li>
-            <li><a href="#timeline">{t('troupe')}</a></li>
-            <li><a href="#about">{t('about')}</a></li>
-            <li><a href="#contact">{t('contact')}</a></li>
-            <li><a class="join" href="#membership">{t('join')}</a></li>
+            <li><a href={localePath(locale)}>{t('home')}</a></li>
+            <li><a href={postsPath(locale)}>{t('navPosts')}</a></li>
+            <li><a href={aboutPath(locale)}>{t('about')}</a></li>
+            <li><a class="join" href={`${localePath(locale)}#membership`}>{t('join')}</a></li>
           </ul>
         </nav>
       </div>
@@ -82,9 +79,9 @@ const switchLocalePath = (loc: Locale) =>
           <div>
             <h4>{t('footerExplore')}</h4>
             <ul>
-              <li><a href="#timeline">{t('fair')}</a></li>
-              <li><a href="#timeline">{t('act')}</a></li>
-              <li><a href="#timeline">{t('troupe')}</a></li>
+              <li><a href={postsPath(locale)}>{t('fair')}</a></li>
+              <li><a href={postsPath(locale)}>{t('act')}</a></li>
+              <li><a href={postsPath(locale)}>{t('troupe')}</a></li>
             </ul>
           </div>
           <div>
@@ -118,24 +115,64 @@ const switchLocalePath = (loc: Locale) =>
 
     <script>
       document.querySelectorAll<HTMLElement>('[data-year-filter]').forEach((container) => {
-        const rows = container.querySelectorAll<HTMLElement>('[data-year]:not(.year-pill)');
-        const pills = container.querySelectorAll<HTMLButtonElement>('.year-pill');
+        const rows = container.querySelectorAll<HTMLElement>('.row[data-year]');
+        const yearPills = container.querySelectorAll<HTMLButtonElement>('.year-pill');
+        const kindPills = container.querySelectorAll<HTMLButtonElement>('.kind-pill');
+        const resetPills = container.querySelectorAll<HTMLButtonElement>('.reset-pill');
+        const searchInput = container.querySelector<HTMLInputElement>('[data-search-input]');
+        const defaultYears = (container.dataset.defaultYears ?? '').split(',').filter(Boolean);
 
-        function showYear(year: string) {
+        type Active = { type: 'year' | 'kind'; value: string } | null;
+        let active: Active = null;
+
+        function matchesActive(row: HTMLElement): boolean {
+          if (!active) return defaultYears.length === 0 || defaultYears.includes(row.dataset.year ?? '');
+          if (active.type === 'year') return row.dataset.year === active.value;
+          return row.dataset.kind === active.value;
+        }
+
+        function matchesSearch(row: HTMLElement): boolean {
+          const term = searchInput?.value.trim().toLowerCase() ?? '';
+          if (term === '') return true;
+          return (row.dataset.searchText ?? '').toLowerCase().includes(term);
+        }
+
+        function render() {
           rows.forEach((row) => {
-            row.hidden = row.dataset.year !== year;
+            row.hidden = !matchesActive(row) || !matchesSearch(row);
           });
-          pills.forEach((pill) => {
-            pill.setAttribute('aria-pressed', String(pill.dataset.year === year));
+          yearPills.forEach((pill) => {
+            pill.setAttribute('aria-pressed', String(active?.type === 'year' && pill.dataset.year === active.value));
+          });
+          kindPills.forEach((pill) => {
+            pill.setAttribute('aria-pressed', String(active?.type === 'kind' && pill.dataset.kind === active.value));
+          });
+          resetPills.forEach((pill) => {
+            pill.setAttribute('aria-pressed', String(active === null));
           });
         }
 
-        pills.forEach((pill) => {
-          pill.addEventListener('click', () => showYear(pill.dataset.year ?? ''));
+        yearPills.forEach((pill) => {
+          pill.addEventListener('click', () => {
+            active = { type: 'year', value: pill.dataset.year ?? '' };
+            render();
+          });
         });
+        kindPills.forEach((pill) => {
+          pill.addEventListener('click', () => {
+            active = { type: 'kind', value: pill.dataset.kind ?? '' };
+            render();
+          });
+        });
+        resetPills.forEach((pill) => {
+          pill.addEventListener('click', () => {
+            active = null;
+            render();
+          });
+        });
+        searchInput?.addEventListener('input', render);
 
-        const firstYear = pills[0]?.dataset.year;
-        if (firstYear) showYear(firstYear);
+        render();
       });
     </script>
   </body>
