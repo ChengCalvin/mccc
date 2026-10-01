@@ -23,3 +23,35 @@ const t = useTranslations(locale);
     <div class="map">{t('mapPlaceholder')}</div>
   </div>
 </section>
+
+<style lang="scss">
+  .contact {
+    background: var(--gold-soft);
+
+    dl {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 10px 16px;
+    }
+
+    dt {
+      font-weight: 700;
+      color: var(--red);
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  .map {
+    min-height: 260px;
+    border-radius: var(--radius);
+    background: repeating-linear-gradient(45deg, var(--card), var(--card) 12px, var(--line) 12px, var(--line) 24px);
+    display: grid;
+    place-items: center;
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+  }
+</style>

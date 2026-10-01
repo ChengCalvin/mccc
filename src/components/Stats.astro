@@ -16,3 +16,36 @@ const t = useTranslations(locale);
     <div><b>3</b><span>{t('s4')}</span></div>
   </div>
 </div>
+
+<style lang="scss">
+  .stats {
+    background: var(--red);
+    color: #fff;
+    padding: 0;
+
+    .wrap {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding-block: 22px;
+      text-align: center;
+    }
+
+    b {
+      display: block;
+      font-size: 30px;
+      line-height: 1.1;
+    }
+
+    span {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  }
+</style>

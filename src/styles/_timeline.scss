@@ -1,0 +1,104 @@
+.timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 84px 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.date-block {
+  text-align: center;
+  border-left: 4px solid var(--ink-2);
+  padding-left: 12px;
+
+  .day {
+    display: block;
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  .month {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-2);
+  }
+}
+
+.row.kind-news .date-block {
+  border-left-color: var(--red);
+}
+
+.row.kind-troupe .date-block {
+  border-left-color: var(--gold);
+}
+
+.row.kind-fair .date-block {
+  border-left-color: var(--red-deep);
+}
+
+.row-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.kind-icon {
+  display: inline-flex;
+  color: var(--ink-2);
+}
+
+.row.kind-news .kind-icon {
+  color: var(--red);
+}
+
+.row.kind-troupe .kind-icon {
+  color: var(--gold);
+}
+
+.row.kind-fair .kind-icon {
+  color: var(--red-deep);
+}
+
+.kind-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-2);
+}
+
+.row h3 {
+  font-size: 16px;
+}
+
+.row .thumb {
+  width: 96px;
+  height: 72px;
+  aspect-ratio: unset;
+  border-radius: var(--radius);
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 64px 1fr;
+  }
+
+  .row .thumb {
+    display: none;
+  }
+}
