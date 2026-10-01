@@ -7,7 +7,6 @@
   "about": "关于华商会",
   "contact": "联系我们",
   "join": "加入我们",
-  "explore": "了解活动",
   "all": "查看全部 →",
   "navPosts": "全部动态",
   "postsPageH": "全部动态",
@@ -15,9 +14,10 @@
   "filterAllLabel": "全部",
   "seeAllPosts": "查看全部动态 →",
 
-  "heroEyebrow": "Montreal Chinese Chamber of Commerce",
-  "heroTitleHtml": "连接社区，<em>服务</em>蒙特利尔华人商界",
-  "heroSub": "加拿大蒙特利尔华商会致力于凝聚华商力量，举办欢乐春节庙会等社区活动，并搭建与政府、企业及各界的沟通桥梁。",
+  "heroPrevSlide": "上一张",
+  "heroNextSlide": "下一张",
+  "heroGoToSlidePrefix": "跳转到第",
+  "heroGoToSlideSuffix": "张",
 
   "s1": "成立艺术团",
   "s2": "届欢乐春节庙会",

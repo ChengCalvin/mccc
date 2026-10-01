@@ -7,7 +7,6 @@
   "about": "À propos",
   "contact": "Contact",
   "join": "Adhérer",
-  "explore": "Voir les activités",
   "all": "Tout voir →",
   "navPosts": "Publications",
   "postsPageH": "Toutes les publications",
@@ -15,9 +14,10 @@
   "filterAllLabel": "Tout",
   "seeAllPosts": "Voir toutes les publications →",
 
-  "heroEyebrow": "Montreal Chinese Chamber of Commerce",
-  "heroTitleHtml": "Rassembler et <em>servir</em> la communauté d'affaires chinoise de Montréal",
-  "heroSub": "La Chambre de Commerce Chinoise de Montréal réunit les commerçants, organise des événements comme la Foire du Nouvel An lunaire et crée des liens avec les gouvernements et les entreprises.",
+  "heroPrevSlide": "Diapositive précédente",
+  "heroNextSlide": "Diapositive suivante",
+  "heroGoToSlidePrefix": "Aller à la diapositive",
+  "heroGoToSlideSuffix": "",
 
   "s1": "Troupe fondée",
   "s2": "foires du Nouvel An",

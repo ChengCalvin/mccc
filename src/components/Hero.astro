@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import { useTranslations, type Locale } from '../lib/i18n';
 
 interface Props {
@@ -6,14 +7,122 @@ interface Props {
 }
 const { locale } = Astro.props;
 const t = useTranslations(locale);
+
+function localize(locale: Locale, zh: string, en?: string, fr?: string): string {
+  if (locale === 'en') return en ?? zh;
+  if (locale === 'fr') return fr ?? zh;
+  return zh;
+}
+
+const slides = (await getCollection('hero-slides'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((entry) => ({
+    id: entry.id,
+    title: localize(locale, entry.data.title, entry.data.titleEn, entry.data.titleFr),
+    image: entry.data.image,
+  }));
+
+const hasMultiple = slides.length > 1;
 ---
 
-<section class="hero">
-  <div class="wrap">
-    <div class="eyebrow" style="color:var(--gold)">{t('heroEyebrow')}</div>
-    <h1 set:html={t('heroTitleHtml')} />
-    <p>{t('heroSub')}</p>
-    <a class="btn primary" href="#membership">{t('join')}</a>
-    <a class="btn ghost" href="#activities">{t('explore')}</a>
-  </div>
-</section>
+{slides.length > 0 && (
+  <section class="hero" data-hero-carousel>
+    {slides.map((slide, i) => (
+      <div
+        class={`slide${i === 0 ? ' active' : ''}`}
+        data-slide-index={i}
+        aria-hidden={i === 0 ? undefined : 'true'}
+      >
+        <img class="slide-img" src={slide.image} alt="" loading={i === 0 ? 'eager' : 'lazy'} />
+        <div class="caption">
+          <p class="caption-text">{slide.title}</p>
+        </div>
+      </div>
+    ))}
+
+    {hasMultiple && <p class="sr-only" data-hero-announce aria-live="polite" />}
+
+    {hasMultiple && (
+      <div class="hero-controls">
+        <button type="button" class="hero-arrow prev" aria-label={t('heroPrevSlide')}>‹</button>
+        <div class="hero-dots" role="group" aria-label="Slides">
+          {slides.map((_, i) => (
+            <button
+              type="button"
+              class={`hero-dot${i === 0 ? ' active' : ''}`}
+              data-dot-index={i}
+              aria-label={`${t('heroGoToSlidePrefix')} ${i + 1}${t('heroGoToSlideSuffix')}`}
+              aria-pressed={i === 0}
+            />
+          ))}
+        </div>
+        <button type="button" class="hero-arrow next" aria-label={t('heroNextSlide')}>›</button>
+      </div>
+    )}
+  </section>
+)}
+
+{hasMultiple && (
+  <script>
+    const ROTATE_INTERVAL_MS = 6000;
+
+    document.querySelectorAll<HTMLElement>('[data-hero-carousel]').forEach((carousel) => {
+      const slides = Array.from(carousel.querySelectorAll<HTMLElement>('.slide'));
+      const dots = Array.from(carousel.querySelectorAll<HTMLButtonElement>('.hero-dot'));
+      const prevBtn = carousel.querySelector<HTMLButtonElement>('.hero-arrow.prev');
+      const nextBtn = carousel.querySelector<HTMLButtonElement>('.hero-arrow.next');
+      const announce = carousel.querySelector<HTMLElement>('[data-hero-announce]');
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      let active = 0;
+      let timer: ReturnType<typeof setInterval> | null = null;
+
+      function show(index: number) {
+        active = (index + slides.length) % slides.length;
+        slides.forEach((slide, i) => {
+          slide.classList.toggle('active', i === active);
+          if (i === active) slide.removeAttribute('aria-hidden');
+          else slide.setAttribute('aria-hidden', 'true');
+        });
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === active);
+          dot.setAttribute('aria-pressed', String(i === active));
+        });
+        if (announce) {
+          announce.textContent = slides[active].querySelector('.caption-text')?.textContent ?? '';
+        }
+      }
+
+      function next() {
+        show(active + 1);
+      }
+
+      function prev() {
+        show(active - 1);
+      }
+
+      function start() {
+        if (reducedMotion || timer) return;
+        timer = setInterval(next, ROTATE_INTERVAL_MS);
+      }
+
+      function stop() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      nextBtn?.addEventListener('click', next);
+      prevBtn?.addEventListener('click', prev);
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => show(i));
+      });
+
+      carousel.addEventListener('mouseenter', stop);
+      carousel.addEventListener('mouseleave', start);
+
+      start();
+    });
+  </script>
+)}

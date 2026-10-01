@@ -45,9 +45,21 @@ const troupe = defineCollection({
   schema: z.object(cardFields),
 });
 
+const heroSlides = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/hero-slides' }),
+  schema: z.object({
+    title: z.string(),
+    titleEn: z.string().optional(),
+    titleFr: z.string().optional(),
+    image: z.string(),
+    order: z.number(),
+  }),
+});
+
 export const collections = {
   news,
   'fair-years': fairYears,
   activities,
   troupe,
+  'hero-slides': heroSlides,
 };

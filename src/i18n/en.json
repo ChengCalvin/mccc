@@ -7,7 +7,6 @@
   "about": "About",
   "contact": "Contact",
   "join": "Join Us",
-  "explore": "See activities",
   "all": "View all →",
   "navPosts": "Posts",
   "postsPageH": "All Posts",
@@ -15,9 +14,10 @@
   "filterAllLabel": "All",
   "seeAllPosts": "See all posts →",
 
-  "heroEyebrow": "Montreal Chinese Chamber of Commerce",
-  "heroTitleHtml": "Connecting &amp; <em>serving</em> Montreal's Chinese business community",
-  "heroSub": "The Montreal Chinese Chamber of Commerce brings merchants together, hosts community events like the Joyful Spring Festival Temple Fair, and builds bridges with government and business.",
+  "heroPrevSlide": "Previous slide",
+  "heroNextSlide": "Next slide",
+  "heroGoToSlidePrefix": "Go to slide",
+  "heroGoToSlideSuffix": "",
 
   "s1": "Arts Troupe founded",
   "s2": "Spring Festival fairs",
