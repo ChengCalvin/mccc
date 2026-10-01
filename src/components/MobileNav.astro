@@ -1,0 +1,214 @@
+---
+import { useTranslations, type Locale } from '../lib/i18n';
+import { postsPath, aboutPath, contactPath } from '../lib/routes';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const localePath = (loc: Locale) => (loc === 'zh' ? '/' : `/${loc}/`);
+
+const currentPath = Astro.url.pathname;
+const pathWithoutLocale =
+  locale === 'zh' ? currentPath : currentPath.replace(new RegExp(`^/${locale}(/|$)`), '/');
+const switchLocalePath = (loc: Locale) =>
+  loc === 'zh' ? pathWithoutLocale : `/${loc}${pathWithoutLocale}`.replace(/\/{2,}/g, '/');
+---
+
+<div class="mobile-nav">
+  <button
+    type="button"
+    id="mobile-nav-trigger"
+    class="hamburger"
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-controls="mobile-nav-panel"
+    aria-label="Menu"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <div id="mobile-nav-panel" class="mobile-nav-panel" hidden>
+    <ul class="mobile-nav-links">
+      <li><a href={localePath(locale)}>{t('home')}</a></li>
+      <li><a href={postsPath(locale)}>{t('navPosts')}</a></li>
+      <li><a href={aboutPath(locale)}>{t('about')}</a></li>
+      <li><a href={contactPath(locale)}>{t('contact')}</a></li>
+      <li><a class="join" href={`${localePath(locale)}#membership`}>{t('join')}</a></li>
+    </ul>
+
+    <div class="mobile-lang" role="group" aria-label="Language">
+      <a href={switchLocalePath('zh')} aria-pressed={locale === 'zh'}>中文</a>
+      <a href={switchLocalePath('en')} aria-pressed={locale === 'en'}>EN</a>
+      <a href={switchLocalePath('fr')} aria-pressed={locale === 'fr'}>FR</a>
+    </div>
+
+    <button type="button" id="theme-toggle-mobile" class="theme" aria-label="Toggle theme">◐ Theme</button>
+  </div>
+</div>
+
+<script>
+  const trigger = document.getElementById('mobile-nav-trigger');
+  const panel = document.getElementById('mobile-nav-panel');
+  const nav = document.querySelector('.mobile-nav');
+
+  function closePanel() {
+    panel?.setAttribute('hidden', '');
+    trigger?.setAttribute('aria-expanded', 'false');
+  }
+
+  function openPanel() {
+    panel?.removeAttribute('hidden');
+    trigger?.setAttribute('aria-expanded', 'true');
+  }
+
+  trigger?.addEventListener('click', () => {
+    const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+    if (isOpen) closePanel();
+    else openPanel();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!nav?.contains(e.target as Node)) closePanel();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closePanel();
+  });
+
+  panel?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', closePanel);
+  });
+
+  const themeBtn = document.getElementById('theme-toggle-mobile');
+  themeBtn?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const isDark = root.dataset.theme
+      ? root.dataset.theme === 'dark'
+      : matchMedia('(prefers-color-scheme: dark)').matches;
+    const next = isDark ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem('theme', next);
+    } catch (e) {}
+  });
+</script>
+
+<style lang="scss">
+  .mobile-nav {
+    display: none;
+    position: relative;
+
+    @media (max-width: 820px) {
+      display: block;
+    }
+  }
+
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 36px;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 0;
+
+    span {
+      display: block;
+      height: 2px;
+      margin-inline: 8px;
+      background: var(--ink);
+    }
+  }
+
+  .mobile-nav-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 220px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    padding: 14px;
+    z-index: 30;
+  }
+
+  .mobile-nav-links {
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+
+      &:hover {
+        background: var(--gold-soft);
+        color: var(--red);
+      }
+
+      &.join {
+        background: var(--red);
+        color: #fff;
+        text-align: center;
+        margin-top: 8px;
+
+        &:hover {
+          background: var(--red-deep);
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  .mobile-lang {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+
+    a {
+      flex: 1;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 4px 0;
+      font-size: 14px;
+
+      &[aria-pressed='true'] {
+        background: var(--red);
+        border-color: var(--red);
+        color: #fff;
+      }
+    }
+  }
+
+  button.theme {
+    width: 100%;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 6px 0;
+    font: inherit;
+    cursor: pointer;
+    color: inherit;
+
+    &:hover {
+      background: var(--gold-soft);
+      color: var(--red);
+    }
+  }
+</style>

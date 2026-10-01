@@ -1,5 +1,4 @@
 ---
-import Contact from './Contact.astro';
 import { useTranslations, type Locale } from '../lib/i18n';
 
 interface Props {
@@ -33,5 +32,3 @@ const t = useTranslations(locale);
     </div>
   </div>
 </section>
-
-<Contact locale={locale} />

@@ -1,7 +1,9 @@
 ---
 import '../styles/global.scss';
 import { useTranslations, type Locale } from '../lib/i18n';
-import { postsPath, aboutPath } from '../lib/routes';
+import { postsPath, aboutPath, contactPath } from '../lib/routes';
+import LocaleThemeSwitch from '../components/LocaleThemeSwitch.astro';
+import MobileNav from '../components/MobileNav.astro';
 
 interface Props {
   locale: Locale;
@@ -13,14 +15,6 @@ const t = useTranslations(locale);
 const htmlLang = locale === 'zh' ? 'zh-CN' : locale;
 
 const localePath = (loc: Locale) => (loc === 'zh' ? '/' : `/${loc}/`);
-
-// Preserve the current page when switching locales: strip the active
-// locale's prefix off the URL, then re-prefix with the target locale.
-const currentPath = Astro.url.pathname;
-const pathWithoutLocale =
-  locale === 'zh' ? currentPath : currentPath.replace(new RegExp(`^/${locale}(/|$)`), '/');
-const switchLocalePath = (loc: Locale) =>
-  loc === 'zh' ? pathWithoutLocale : `/${loc}${pathWithoutLocale}`.replace(/\/{2,}/g, '/');
 ---
 
 <html lang={htmlLang}>
@@ -39,29 +33,20 @@ const switchLocalePath = (loc: Locale) =>
     </script>
   </head>
   <body>
-    <div class="top">
-      <div class="wrap">
-        <span>📍 1070A Anderson, Montreal, QC H2Z 1L9 &nbsp;·&nbsp; ☎ (514) 800-3860</span>
-        <span class="lang" role="group" aria-label="Language">
-          <a href={switchLocalePath('zh')} aria-pressed={locale === 'zh'}>中文</a>
-          <a href={switchLocalePath('en')} aria-pressed={locale === 'en'}>EN</a>
-          <a href={switchLocalePath('fr')} aria-pressed={locale === 'fr'}>FR</a>
-          <button class="theme" id="theme" aria-label="Toggle theme">◐</button>
-        </span>
-      </div>
-    </div>
-
     <header class="nav">
       <div class="wrap">
         <a class="logo" href={localePath(locale)}><img src="/images/logo.png" alt="MCCC 加拿大蒙特利尔华商会" /></a>
-        <nav aria-label="Main">
+        <nav class="primary-nav" aria-label="Main">
           <ul>
             <li><a href={localePath(locale)}>{t('home')}</a></li>
             <li><a href={postsPath(locale)}>{t('navPosts')}</a></li>
             <li><a href={aboutPath(locale)}>{t('about')}</a></li>
+            <li><a href={contactPath(locale)}>{t('contact')}</a></li>
             <li><a class="join" href={`${localePath(locale)}#membership`}>{t('join')}</a></li>
           </ul>
         </nav>
+        <LocaleThemeSwitch locale={locale} />
+        <MobileNav locale={locale} />
       </div>
     </header>
 
@@ -75,6 +60,7 @@ const switchLocalePath = (loc: Locale) =>
           <div>
             <h4>MCCC · 加拿大蒙特利尔华商会</h4>
             <p>{t('footerTaglineEn')}<br />{t('footerTaglineFr')}</p>
+            <p>{t('addr')}: 1070A Anderson, Montreal, Quebec H2Z 1L9<br />{t('phone')}: (514) 800-3860</p>
           </div>
           <div>
             <h4>{t('footerExplore')}</h4>
@@ -97,21 +83,6 @@ const switchLocalePath = (loc: Locale) =>
         <div class="legal">{t('footerLegal')}</div>
       </div>
     </footer>
-
-    <script>
-      const themeBtn = document.getElementById('theme');
-      themeBtn?.addEventListener('click', () => {
-        const root = document.documentElement;
-        const isDark = root.dataset.theme
-          ? root.dataset.theme === 'dark'
-          : matchMedia('(prefers-color-scheme: dark)').matches;
-        const next = isDark ? 'light' : 'dark';
-        root.dataset.theme = next;
-        try {
-          localStorage.setItem('theme', next);
-        } catch (e) {}
-      });
-    </script>
 
     <script>
       document.querySelectorAll<HTMLElement>('[data-year-filter]').forEach((container) => {
@@ -179,44 +150,6 @@ const switchLocalePath = (loc: Locale) =>
 </html>
 
 <style lang="scss">
-  .top {
-    background: var(--dark);
-    color: var(--on-dark);
-    font-size: 13px;
-
-    .wrap {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding-block: 8px;
-      flex-wrap: wrap;
-    }
-
-    a:hover {
-      color: var(--gold);
-    }
-  }
-
-  .lang {
-    a,
-    button.theme {
-      background: none;
-      border: 1px solid #555;
-      color: inherit;
-      border-radius: 20px;
-      padding: 2px 12px;
-      font: inherit;
-      cursor: pointer;
-      margin-left: 6px;
-      display: inline-block;
-    }
-
-    a[aria-pressed='true'] {
-      background: var(--red);
-      border-color: var(--red);
-    }
-  }
-
   header.nav {
     position: sticky;
     top: 0;
@@ -232,13 +165,6 @@ const switchLocalePath = (loc: Locale) =>
       gap: 16px;
       padding-block: 10px;
     }
-
-    @media (max-width: 820px) {
-      .wrap {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
   }
 
   .logo img {
@@ -247,6 +173,14 @@ const switchLocalePath = (loc: Locale) =>
     background: #fff;
     border-radius: 6px;
     padding: 4px 8px;
+  }
+
+  .primary-nav {
+    flex: 1;
+
+    @media (max-width: 820px) {
+      display: none;
+    }
   }
 
   nav ul {

@@ -4,7 +4,6 @@ import Stats from './Stats.astro';
 import Timeline from './Timeline.astro';
 import About from './About.astro';
 import Membership from './Membership.astro';
-import Contact from './Contact.astro';
 import type { Locale } from '../lib/i18n';
 
 interface Props {
@@ -18,4 +17,3 @@ const { locale } = Astro.props;
 <Timeline locale={locale} />
 <About locale={locale} />
 <Membership locale={locale} />
-<Contact locale={locale} />

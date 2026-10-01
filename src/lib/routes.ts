@@ -28,3 +28,7 @@ export function postsPath(locale: Locale): string {
 export function aboutPath(locale: Locale): string {
   return `${localePrefix(locale)}/about`;
 }
+
+export function contactPath(locale: Locale): string {
+  return `${localePrefix(locale)}/contact`;
+}

@@ -1,0 +1,148 @@
+---
+import type { Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+
+const localeLabel: Record<Locale, string> = { zh: '中文', en: 'EN', fr: 'FR' };
+
+const currentPath = Astro.url.pathname;
+const pathWithoutLocale =
+  locale === 'zh' ? currentPath : currentPath.replace(new RegExp(`^/${locale}(/|$)`), '/');
+const switchLocalePath = (loc: Locale) =>
+  loc === 'zh' ? pathWithoutLocale : `/${loc}${pathWithoutLocale}`.replace(/\/{2,}/g, '/');
+---
+
+<div class="locale-theme-switch">
+  <button
+    type="button"
+    id="locale-trigger"
+    class="locale-trigger"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls="locale-listbox"
+    aria-label="Language"
+  >
+    {localeLabel[locale]} <span aria-hidden="true">▾</span>
+  </button>
+  <ul id="locale-listbox" class="locale-listbox" role="listbox" hidden>
+    <li role="option" aria-selected={locale === 'zh'}><a href={switchLocalePath('zh')}>中文</a></li>
+    <li role="option" aria-selected={locale === 'en'}><a href={switchLocalePath('en')}>EN</a></li>
+    <li role="option" aria-selected={locale === 'fr'}><a href={switchLocalePath('fr')}>FR</a></li>
+  </ul>
+  <button type="button" id="theme-toggle-desktop" class="theme" aria-label="Toggle theme">◐</button>
+</div>
+
+<script>
+  const trigger = document.getElementById('locale-trigger');
+  const listbox = document.getElementById('locale-listbox');
+  const switcher = document.querySelector('.locale-theme-switch');
+
+  function closeListbox() {
+    listbox?.setAttribute('hidden', '');
+    trigger?.setAttribute('aria-expanded', 'false');
+  }
+
+  function openListbox() {
+    listbox?.removeAttribute('hidden');
+    trigger?.setAttribute('aria-expanded', 'true');
+  }
+
+  trigger?.addEventListener('click', () => {
+    const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+    if (isOpen) closeListbox();
+    else openListbox();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!switcher?.contains(e.target as Node)) closeListbox();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeListbox();
+  });
+
+  const themeBtn = document.getElementById('theme-toggle-desktop');
+  themeBtn?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const isDark = root.dataset.theme
+      ? root.dataset.theme === 'dark'
+      : matchMedia('(prefers-color-scheme: dark)').matches;
+    const next = isDark ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem('theme', next);
+    } catch (e) {}
+  });
+</script>
+
+<style lang="scss">
+  .locale-theme-switch {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 4px 6px;
+
+    @media (max-width: 820px) {
+      display: none;
+    }
+  }
+
+  .locale-trigger,
+  button.theme {
+    background: none;
+    border: none;
+    color: inherit;
+    border-radius: 16px;
+    padding: 4px 10px;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--gold-soft);
+      color: var(--red);
+    }
+  }
+
+  .locale-listbox {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    min-width: 90px;
+    z-index: 30;
+
+    li {
+      margin: 0;
+    }
+
+    a {
+      display: block;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+
+      &:hover {
+        background: var(--gold-soft);
+        color: var(--red);
+      }
+    }
+
+    [aria-selected='true'] a {
+      color: var(--red);
+      font-weight: 700;
+    }
+  }
+</style>
